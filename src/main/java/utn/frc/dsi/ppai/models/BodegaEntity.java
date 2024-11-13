@@ -22,14 +22,6 @@ public class BodegaEntity {
     private String coordenadas;
     private String sitioWeb;
 
-/*
-    @OneToMany(mappedBy = "bodega")
-    private List<VinoEntity> vinos = new ArrayList<>();
-
-    @OneToMany(mappedBy = "bodega")
-    private List<SiguiendoEntity> seguidores = new ArrayList<>();
-*/
-
     public Boolean tieneActualizacion() {
         if (ultimaActualizacion == null) {
             return true;

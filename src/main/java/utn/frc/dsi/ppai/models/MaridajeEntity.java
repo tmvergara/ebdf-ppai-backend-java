@@ -18,7 +18,4 @@ public class MaridajeEntity {
     private String descripcion;
     private String nombre;
 
-//    @ManyToMany(mappedBy = "maridajes")
-//    private List<VinoEntity> maridajes = new ArrayList<>();
-
 }

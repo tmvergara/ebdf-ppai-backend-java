@@ -10,7 +10,7 @@ public class VarietalEntity {
     private Integer id;
 
     private String descripcion;
-    private String porcentajeComposicion;
+    private int porcentajeComposicion;
 
     @ManyToOne
     @JoinColumn(name = "tipoUva_id")

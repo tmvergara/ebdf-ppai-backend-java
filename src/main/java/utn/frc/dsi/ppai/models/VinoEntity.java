@@ -14,7 +14,7 @@ public class VinoEntity {
     private Integer aniada;
     private String imgEtiqueta;
     private String nombre;
-    private String notaDeCata;
+    private float notaDeCata;
     private float precio;
 
     @ManyToMany
