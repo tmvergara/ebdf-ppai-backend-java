@@ -1,9 +1,9 @@
 package utn.frc.dsi.ppai.models;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @ToString @AllArgsConstructor @EqualsAndHashCode
 public class VinoEntity {
@@ -17,7 +17,20 @@ public class VinoEntity {
     private String notaDeCata;
     private float precio;
 
-    private MaridajeEntity maridaje;
+    @ManyToMany
+    @JoinTable(
+            name = "vino_maridaje",
+            joinColumns = @JoinColumn(name = "vino_id"),
+            inverseJoinColumns = @JoinColumn(name = "maridaje_id")
+    )
+    private List<MaridajeEntity> maridajes;
 
+    @ManyToOne
+    @JoinColumn(name = "bodega_id")
     private BodegaEntity bodega;
+
+    @ManyToOne
+    @JoinColumn(name = "varietal_id")
+    private VarietalEntity varietal;
+
 }

@@ -1,8 +1,6 @@
 package utn.frc.dsi.ppai.models;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
@@ -16,13 +14,17 @@ public class SiguiendoEntity {
     private Date fechaInicio;
     private Date fechaFin;
 
+    @ManyToOne
+    @JoinColumn(name = "bodega_id")
     private BodegaEntity bodega;
 
-    private EnofiloEntity enofilo;
+    @ManyToOne
+    @JoinColumn(name = "enofilo_id")
+    private EnofiloEntity seguido;
 
-    public SiguiendoEntity(BodegaEntity bodega, EnofiloEntity enofilo) {
+    public SiguiendoEntity(BodegaEntity bodega, EnofiloEntity seguido) {
         this.fechaInicio = new Date();
         this.bodega = bodega;
-        this.enofilo = enofilo;
+        this.seguido = seguido;
     }
 }

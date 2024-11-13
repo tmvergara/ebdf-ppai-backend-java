@@ -1,8 +1,6 @@
 package utn.frc.dsi.ppai.models;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter @Setter @NoArgsConstructor @ToString @AllArgsConstructor @EqualsAndHashCode
@@ -14,5 +12,8 @@ public class VarietalEntity {
     private String descripcion;
     private String porcentajeComposicion;
 
+    @ManyToOne
+    @JoinColumn(name = "tipoUva_id")
     private TipoUvaEntity tipoUva;
+
 }

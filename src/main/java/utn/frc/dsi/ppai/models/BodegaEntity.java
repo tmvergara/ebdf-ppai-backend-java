@@ -2,10 +2,10 @@ package utn.frc.dsi.ppai.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.*;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 @Getter @Setter @NoArgsConstructor @ToString @AllArgsConstructor @EqualsAndHashCode
 @Entity
@@ -21,6 +21,14 @@ public class BodegaEntity {
     private String imgLogoBodega;
     private String coordenadas;
     private String sitioWeb;
+
+/*
+    @OneToMany(mappedBy = "bodega")
+    private List<VinoEntity> vinos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "bodega")
+    private List<SiguiendoEntity> seguidores = new ArrayList<>();
+*/
 
     public Boolean tieneActualizacion() {
         if (ultimaActualizacion == null) {

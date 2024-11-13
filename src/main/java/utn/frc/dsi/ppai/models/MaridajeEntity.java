@@ -3,7 +3,11 @@ package utn.frc.dsi.ppai.models;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @ToString @AllArgsConstructor @EqualsAndHashCode
 public class MaridajeEntity {
@@ -13,5 +17,8 @@ public class MaridajeEntity {
 
     private String descripcion;
     private String nombre;
+
+//    @ManyToMany(mappedBy = "maridajes")
+//    private List<VinoEntity> maridajes = new ArrayList<>();
 
 }

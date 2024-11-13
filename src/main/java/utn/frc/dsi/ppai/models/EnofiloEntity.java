@@ -17,6 +17,6 @@ public class EnofiloEntity {
     @JoinColumn(name = "usuarioId")
     private UsuarioEntity usuario;
 
-    @ManyToOne
+    @OneToMany(mappedBy = "enofilo")
     private SiguiendoEntity siguiendo;
 }
