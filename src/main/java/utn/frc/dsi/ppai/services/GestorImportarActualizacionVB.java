@@ -7,13 +7,16 @@ import utn.frc.dsi.ppai.dtos.VinoDto;
 import utn.frc.dsi.ppai.models.BodegaEntity;
 import utn.frc.dsi.ppai.repositories.BodegaRepository;
 import utn.frc.dsi.ppai.repositories.VinoRepository;
+import utn.frc.dsi.ppai.models.BodegaEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
 public class GestorImportarActualizacionVB implements SujetoNotificador {
+    private List<BodegaEntity> bodegasSeleccionadas;
 
     private final BodegaRepository bodegaRepository;
     private final VinoRepository vinoRepository;
@@ -24,7 +27,7 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
         this.vinoRepository = vinoRepository;
     }
 
-    
+
     public List<BodegaDto> buscarBodegasConActualizacion() {
         // Convierte el Iterable a un Stream para aplicar filtrado y mapeo
         return StreamSupport.stream(bodegaRepository.findAll().spliterator(), false)
@@ -71,4 +74,15 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
     public void notificar() {
 
     }
+
+    private boolean verificarSeleccionUnica(){
+        return this.bodegasSeleccionadas.size() == 1;
+    }
+
+    private List<ActualizacionBodegaDto> actualizarDatosBodega(BodegaEntity bodega){
+        List<ActualizacionBodegaDto> resumenActualizacion = new ArrayList<>();
+
+    }
+
+
 }
