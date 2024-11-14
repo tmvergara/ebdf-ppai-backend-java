@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import utn.frc.dsi.ppai.models.BodegaEntity;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class BodegaDto {
     private int id;
     private String nombre;
@@ -23,6 +26,7 @@ public class BodegaDto {
     private String imgLogoBodega;
     private String sitioWeb;
     private Coordenadas coordenadas;
+    private List<VinoDto> vinos;
 
     @Data
     public static class Coordenadas {
@@ -43,20 +47,14 @@ public class BodegaDto {
         this.nombre = bodega.getNombre();
         this.descripcion = bodega.getDescripcion();
         this.historias = bodega.getHistorias();
-        this.periodoActualizacion = bodega.getPeriodoActualziacion();
+        this.periodoActualizacion = bodega.getPeriodoActualizacion();
         this.ultimaActualizacion = bodega.getUltimaActualizacion();
         this.imgLogoBodega = bodega.getImgLogoBodega();
         this.sitioWeb = bodega.getSitioWeb();
-        this.coordenadas = parseCoordenadas(bodega.getCoordenadas());
+        this.coordenadas = parseCoordenadas(bodega.getLatitud(), bodega.getLongitud());
     }
 
-    private Coordenadas parseCoordenadas(String coordenadasStr) {
-        if (coordenadasStr != null && coordenadasStr.contains(",")) {
-            String[] partes = coordenadasStr.split(",");
-            double lat = Double.parseDouble(partes[0]);
-            double lng = Double.parseDouble(partes[1]);
-            return new Coordenadas(lat, lng);
-        }
-        return null;
+    private Coordenadas parseCoordenadas(Double latitud, Double longitud) {
+        return new Coordenadas(latitud, longitud);
     }
 }

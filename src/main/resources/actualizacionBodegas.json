@@ -1,0 +1,174 @@
+{
+  "bodegas":
+
+  {
+    "Bodega Aaron Tubert": [
+      {
+        "id": 4,
+        "nombre": "Vino Tinto Gran Reserva",
+        "aniada": 2017,
+        "varietalDto": {
+          "descripcion": "Vino tinto de calidad superior, elaborado con uvas de la mejor calidad y envejecido en barricas de roble durante un periodo de tiempo superior al de un vino reserva.",
+          "porcentajeComposicion": 80,
+          "tipoUvaDto": {
+            "nombre": "Tempranillo",
+            "descripcion": "Uva tinta de calidad, muy utilizada en la elaboración de vinos tintos de calidad en España. Es la variedad más importante de la península ibérica y la tercera más cultivada en el mundo."
+          }
+        },
+        "precio": 35.99,
+        "notaDeCata": 4.7,
+        "imgEtiqueta": "https://images.vivino.com/thumbs/HvooITLjRHuzhzzI6XqnGg_pb_x960.png"
+      },
+      {
+        "id": 5,
+        "nombre": "Vino Blanco Barrica",
+        "aniada": 2021,
+        "varietalDto": {
+          "descripcion": "Vino blanco de calidad superior, elaborado con uvas seleccionadas y envejecido en barricas de roble francés para una mayor complejidad.",
+          "porcentajeComposicion": 85,
+          "tipoUvaDto": {
+            "nombre": "Chardonnay",
+            "descripcion": "Uva blanca de alta calidad, muy popular en la elaboración de vinos blancos en todo el mundo. Conocida por su versatilidad y capacidad de envejecer bien."
+          }
+        },
+        "precio": 31.99,
+        "notaDeCata": 4.2,
+        "imgEtiqueta": "https://images.vivino.com/thumbs/BSrZZl-kTT-5HlQwX2Ayug_pb_x960.png"
+      },
+      {
+        "id": 11,
+        "nombre": "Vino Tinto Reserva Especial",
+        "aniada": 2018,
+        "varietalDto": {
+          "descripcion": "Vino tinto de calidad, elaborado con una mezcla de uvas seleccionadas y envejecido en barricas de roble durante un periodo extendido.",
+          "porcentajeComposicion": 70,
+          "tipoUvaDto": {
+            "nombre": "Cabernet Sauvignon",
+            "descripcion": "Una de las variedades de uva tinta más famosas y cultivadas en el mundo, conocida por producir vinos robustos y con gran potencial de envejecimiento."
+          }
+        },
+        "precio": 35.99,
+        "notaDeCata": 4.3,
+        "imgEtiqueta": "https://images.vivino.com/thumbs/wKyTV_eTTleJniQ2gGebDQ_pb_x960.png"
+      }
+    ],
+    "Bodega Freixenet Argentina": [
+      {
+        "id": 6,
+        "nombre": "Vino Rosado Seco",
+        "aniada": 2017,
+        "varietalDto": {
+          "descripcion": "Vino tinto de calidad superior, elaborado con uvas de la mejor calidad y envejecido en barricas de roble americano para un sabor único.",
+          "porcentajeComposicion": 90,
+          "tipoUvaDto": {
+            "nombre": "Merlot",
+            "descripcion": "Uva tinta de gran popularidad, conocida por su suavidad y capacidad de producir vinos accesibles y de alta calidad."
+          }
+        },
+        "precio": 14.99,
+        "notaDeCata": 4.2,
+        "imgEtiqueta": "https://images.vivino.com/thumbs/FjglrW43STyXnzcl8kqYSw_pb_x960.png"
+      },
+      {
+        "id": 7,
+        "nombre": "Vino Rosado Seco",
+        "aniada": 2018,
+        "varietalDto": {
+          "descripcion": "Vino rosado de calidad, elaborado con una mezcla de uvas tintas y blancas seleccionadas, envejecido en barricas de roble durante un periodo adecuado.",
+          "porcentajeComposicion": 75,
+          "tipoUvaDto": {
+            "nombre": "Garnacha",
+            "descripcion": "Variedad de uva tinta muy utilizada en la producción de vinos rosados y tintos en España, conocida por su capacidad de producir vinos afrutados y aromáticos."
+          }
+        },
+        "precio": 16.99,
+        "notaDeCata": 3.9,
+        "imgEtiqueta": "https://web-common.vivino.com/assets/bottleShot/fallback_1.png"
+      },
+      {
+        "id": 9,
+        "nombre": "Vino Tinto Roble",
+        "aniada": 2023,
+        "varietalDto": {
+          "descripcion": "Vino blanco de calidad superior, elaborado con uvas de la mejor calidad y fermentado en barricas de roble para un perfil complejo.",
+          "porcentajeComposicion": 80,
+          "tipoUvaDto": {
+            "nombre": "Sauvignon Blanc",
+            "descripcion": "Variedad de uva blanca muy popular, conocida por sus vinos frescos y aromáticos con notas cítricas y herbales."
+          }
+        },
+        "precio": 29.99,
+        "notaDeCata": 4.6,
+        "imgEtiqueta": "https://images.vivino.com/thumbs/HvooITLjRHuzhzzI6XqnGg_pb_x960.png"
+      }
+    ],
+    "Bodega La Caroyense": [
+      {
+        "id": 1,
+        "nombre": "Vino Tinto Reserva",
+        "aniada": 2020,
+        "varietalDto": {
+          "descripcion": "Vino tinto de calidad superior, elaborado con uvas de la mejor calidad y envejecido en barricas de roble durante un periodo de tiempo superior al de un vino reserva.",
+          "porcentajeComposicion": 75,
+          "tipoUvaDto": {
+            "nombre": "Cabernet Sauvignon",
+            "descripcion": "Una de las variedades de uva más reconocidas en el mundo, famosa por su sabor intenso y su capacidad de envejecimiento. Utilizada en la elaboración de algunos de los mejores vinos tintos."
+          }
+        },
+        "precio": 27.5,
+        "notaDeCata": 4.5,
+        "imgEtiqueta": "https://images.vivino.com/thumbs/BSrZZl-kTT-5HlQwX2Ayug_pb_x960.png"
+      },
+      {
+        "id": 3,
+        "nombre": "Vino Rosado Semidulce",
+        "aniada": 2019,
+        "varietalDto": {
+          "descripcion": "Vino tinto de calidad superior, elaborado con uvas de la mejor calidad y envejecido en barricas de roble durante un periodo de tiempo superior al de un vino reserva.",
+          "porcentajeComposicion": 85,
+          "tipoUvaDto": {
+            "nombre": "Merlot",
+            "descripcion": "Variedad de uva tinta conocida por su suavidad y sabor afrutado. Es una de las uvas más utilizadas en la producción de vinos tintos en todo el mundo."
+          }
+        },
+        "precio": 18.99,
+        "notaDeCata": 4.0,
+        "imgEtiqueta": "https://images.vivino.com/thumbs/wKyTV_eTTleJniQ2gGebDQ_pb_x960.png"
+      },
+      {
+        "id": 15,
+        "nombre": "Vino Blanco Seco",
+        "aniada": 2020,
+        "varietalDto": {
+          "descripcion": "Vino tinto de calidad superior, elaborado con uvas de la mejor calidad y envejecido en barricas de roble durante un periodo de tiempo superior al de un vino reserva.",
+          "porcentajeComposicion": 70,
+          "tipoUvaDto": {
+            "nombre": "Syrah",
+            "descripcion": "Uva tinta conocida por producir vinos con un profundo color oscuro, con sabores intensos y especiados. Muy popular en regiones vinícolas de Francia y Australia."
+          }
+        },
+        "precio": 19.99,
+        "notaDeCata": 4.0,
+        "imgEtiqueta": "https://images.vivino.com/thumbs/FjglrW43STyXnzcl8kqYSw_pb_x960.png"
+      }
+    ],
+    "Bodega L&L Servicios Internacionales": [
+      {
+        "id": 10,
+        "nombre": "Vino Espumoso Seco",
+        "aniada": 2018,
+        "varietalDto": {
+          "descripcion": "Vino tinto de calidad superior, elaborado con uvas de la mejor calidad y envejecido en barricas de roble durante un periodo de tiempo superior al de un vino reserva.",
+          "porcentajeComposicion": 70,
+          "tipoUvaDto": {
+            "nombre": "Syrah",
+            "descripcion": "Uva tinta conocida por producir vinos con un profundo color oscuro, con sabores intensos y especiados. Muy popular en regiones vinícolas de Francia y Australia."
+          }
+        },
+        "precio": 24.99,
+        "notaDeCata": 4.1,
+        "imgEtiqueta": "https://web-common.vivino.com/assets/bottleShot/fallback_1.png"
+      }
+    ]
+  }
+}

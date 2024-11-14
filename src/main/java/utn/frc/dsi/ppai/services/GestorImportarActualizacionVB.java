@@ -4,27 +4,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import utn.frc.dsi.ppai.dtos.BodegaDto;
 import utn.frc.dsi.ppai.dtos.VinoDto;
+import utn.frc.dsi.ppai.dtos.responses.ItemResumenActualizacionBodegaDto;
+import utn.frc.dsi.ppai.dtos.responses.ResumenActualizacionDto;
 import utn.frc.dsi.ppai.models.BodegaEntity;
+import utn.frc.dsi.ppai.models.TipoUvaEntity;
+import utn.frc.dsi.ppai.models.VinoEntity;
 import utn.frc.dsi.ppai.repositories.BodegaRepository;
+import utn.frc.dsi.ppai.repositories.TipoUvaRepository;
 import utn.frc.dsi.ppai.repositories.VinoRepository;
-import utn.frc.dsi.ppai.models.BodegaEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
 public class GestorImportarActualizacionVB implements SujetoNotificador {
-    private List<BodegaEntity> bodegasSeleccionadas;
+    private List<String> bodegasSeleccionadas;
 
+    private final TipoUvaRepository tipoUvaRepository;
     private final BodegaRepository bodegaRepository;
     private final VinoRepository vinoRepository;
+    private final InterfazImportarActualizacionVB importadorActualizacion;
 
     @Autowired
-    public GestorImportarActualizacionVB(BodegaRepository bodegaRepository, VinoRepository vinoRepository) {
+    public GestorImportarActualizacionVB(BodegaRepository bodegaRepository, VinoRepository vinoRepository, InterfazImportarActualizacionVB importadorActualizacion, TipoUvaRepository tipoUvaRepository) {
         this.bodegaRepository = bodegaRepository;
         this.vinoRepository = vinoRepository;
+        this.importadorActualizacion = importadorActualizacion;
+        this.tipoUvaRepository = tipoUvaRepository;
     }
 
 
@@ -36,27 +45,71 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
                 .collect(Collectors.toList());
     }
 
-    private void crearVino(VinoDto vinoActualizacion) {
-//        Vino nuevoVino = new Vino(
-//                vinoActualizacion.getAniada(),
-//                vinoActualizacion.getImgEtiqueta(),
-//                vinoActualizacion.getNombre(),
-//                vinoActualizacion.getNotaDeCata(),
-//                vinoActualizacion.getPrecio(),
-//        )
-        nuevoVino.crearVarietal(vinoActualizacion.getVarietal());
-        vinoRepository.save(nuevoVino);
+    public ResumenActualizacionDto tomarBodegasSeleccionadas(List<String> bodegasSeleccionadas){
+        this.bodegasSeleccionadas = bodegasSeleccionadas;
+        if(this.verificarSeleccionUnica()){
+            return this.actualizarDatosBodega(this.bodegasSeleccionadas.get(0));
+        } else {
+            throw new RuntimeException("Se selecciono mas de una bodega.");
+        }
     }
 
+    private VinoEntity crearVino(BodegaEntity bodega, VinoDto actualizacion) {
+        Optional<TipoUvaEntity> tipoUvaExistente = tipoUvaRepository.findByNombre(actualizacion.getVarietalDto().getTipoUvaDto().getNombre());
+        TipoUvaEntity tipoUva = tipoUvaExistente.orElseGet(() -> new TipoUvaEntity(actualizacion.getVarietalDto().getTipoUvaDto().getNombre(),
+                actualizacion.getVarietalDto().getTipoUvaDto().getDescripcion()));
 
 
+        VinoEntity nuevoVino = new VinoEntity();
+        nuevoVino.setAniada(actualizacion.getAniada());
+        nuevoVino.setImgEtiqueta(actualizacion.getImgEtiqueta());
+        nuevoVino.setNombre(actualizacion.getNombre());
+        nuevoVino.setNotaDeCata(actualizacion.getNotaDeCata());
+        nuevoVino.setPrecio(actualizacion.getPrecio());
+        nuevoVino.setBodega(bodega);
+        nuevoVino.crearVarietal(actualizacion.getVarietalDto(), tipoUva);
+        vinoRepository.save(nuevoVino);
+        return nuevoVino;
+    }
 
+    private void actualiarVinoExistente(VinoEntity vino, VinoDto actualizacion){
+        vino.actualizarDatosVino(actualizacion);
+        vinoRepository.save(vino);
+    }
 
+    private boolean verificarSeleccionUnica(){
+        return this.bodegasSeleccionadas.size() == 1;
+    }
 
+    private ResumenActualizacionDto actualizarDatosBodega(String nombreBodega){
+        List<ItemResumenActualizacionBodegaDto> itemsResumenActualizacion = new ArrayList<>();
 
+        BodegaDto actualizaciones = importadorActualizacion.solicitarActualizacionAPI(nombreBodega);
+        BodegaEntity bodegaExistente = bodegaRepository.findByNombre(nombreBodega)
+                .orElseThrow(() -> new IllegalArgumentException("La bodega con nombre " + nombreBodega + " no existe en la base de datos."));
 
+        actualizaciones.getVinos().forEach(actualizacion -> {
+            // Busca en la base de datos si existe un vino con el mismo nombre
+            Optional<VinoEntity> vinoExistente = vinoRepository.findByNombre(actualizacion.getNombre());
 
+            if (vinoExistente.isPresent()) {
+                // Flujo para cuando el vino ya existe en la base de datos
+                // Es una ACTUALIZACION
+                VinoEntity vino = vinoExistente.get();
+                this.actualiarVinoExistente(vino, actualizacion);
+                itemsResumenActualizacion.add(new ItemResumenActualizacionBodegaDto(vino, "actualizacion"));
+            } else {
+                // Flujo para cuando el vino no existe en la base de datos
+                // Es una CREACION
+                VinoEntity nuevoVino = this.crearVino(bodegaExistente, actualizacion);
+                itemsResumenActualizacion.add(new ItemResumenActualizacionBodegaDto(nuevoVino, "creacion"));
+            }
+        });
 
+        bodegaExistente.actualizarFechaUltimaActualizacion();
+        bodegaRepository.save(bodegaExistente);
+        return new ResumenActualizacionDto(bodegaExistente, itemsResumenActualizacion);
+    }
 
     // PATRON OBSERVER
 
@@ -72,15 +125,6 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
 
     @Override
     public void notificar() {
-
-    }
-
-    private boolean verificarSeleccionUnica(){
-        return this.bodegasSeleccionadas.size() == 1;
-    }
-
-    private List<ActualizacionBodegaDto> actualizarDatosBodega(BodegaEntity bodega){
-        List<ActualizacionBodegaDto> resumenActualizacion = new ArrayList<>();
 
     }
 

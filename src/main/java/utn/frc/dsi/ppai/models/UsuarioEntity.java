@@ -1,14 +1,14 @@
 package utn.frc.dsi.ppai.models;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
+@Entity
 @Getter @Setter @NoArgsConstructor @ToString @AllArgsConstructor @EqualsAndHashCode
+@Table(name = "usuario")
 public class UsuarioEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String nombre;

@@ -1,25 +1,26 @@
 package utn.frc.dsi.ppai.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.*;
 
-@Getter @Setter @NoArgsConstructor @ToString @AllArgsConstructor @EqualsAndHashCode
 @Entity
+@Getter @Setter @NoArgsConstructor @ToString @AllArgsConstructor @EqualsAndHashCode
+@Table(name = "bodega")
 public class BodegaEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String nombre;
     private String descripcion;
     private String historias;
-    private Integer periodoActualziacion;
+    private Integer periodoActualizacion;
     private Date ultimaActualizacion;
     private String imgLogoBodega;
-    private String coordenadas;
+    private Double latitud;
+    private Double longitud;
     private String sitioWeb;
 
     public Boolean tieneActualizacion() {
@@ -29,7 +30,7 @@ public class BodegaEntity {
 
         Calendar calendario = Calendar.getInstance();
         calendario.setTime(ultimaActualizacion);
-        calendario.add(Calendar.MONTH, periodoActualziacion); // Sumar los meses
+        calendario.add(Calendar.MONTH, periodoActualizacion); // Sumar los meses
 
         Date fechaVencimiento = calendario.getTime();
         Date fechaActual = new Date();

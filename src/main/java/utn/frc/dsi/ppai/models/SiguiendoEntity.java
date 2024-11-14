@@ -5,10 +5,12 @@ import lombok.*;
 
 import java.util.Date;
 
+@Entity
 @Getter @Setter @NoArgsConstructor @ToString @AllArgsConstructor @EqualsAndHashCode
+@Table(name = "siguiendo")
 public class SiguiendoEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private Date fechaInicio;

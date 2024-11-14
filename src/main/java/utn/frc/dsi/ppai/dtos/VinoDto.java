@@ -11,11 +11,11 @@ public class VinoDto {
     private String nombre;
     private int aniada;
     private VarietalDto varietalDto;
-    private float precio;
-    private float notaDeCata;
+    private Double precio;
+    private Double notaDeCata;
     private String imgEtiqueta;
-//    private List<MaridajeDto> maridajeDto;
-//    private MaridajeDto maridajeDto;
+    //    private List<MaridajeDto> maridajeDto;
+    //    private MaridajeDto maridajeDto;
 
     public VinoDto(VinoEntity vino) {
         this.id = vino.getId();
@@ -25,8 +25,8 @@ public class VinoDto {
         this.precio = vino.getPrecio();
         this.notaDeCata = vino.getNotaDeCata();
         this.imgEtiqueta = vino.getImgEtiqueta();
-    //    this.maridajeDto = new MaridajeDto(vino.getMaridajes());
-    //    this.maridajeDto = vino.getMaridajes().forEach(MaridajeDto::new);
+        //    this.maridajeDto = new MaridajeDto(vino.getMaridajes());
+        //    this.maridajeDto = vino.getMaridajes().forEach(MaridajeDto::new);
 
     }
 }

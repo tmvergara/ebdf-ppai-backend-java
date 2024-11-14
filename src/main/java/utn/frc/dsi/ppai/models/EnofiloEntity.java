@@ -3,10 +3,14 @@ package utn.frc.dsi.ppai.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
+@Entity
 @Getter @Setter @NoArgsConstructor @ToString @AllArgsConstructor @EqualsAndHashCode
+@Table(name = "enofilo")
 public class EnofiloEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String apellido;
@@ -14,9 +18,9 @@ public class EnofiloEntity {
     private String imagenPerfil;
 
     @OneToOne
-    @JoinColumn(name = "usuarioId")
+    @JoinColumn(name = "usuario_id")
     private UsuarioEntity usuario;
 
-    @OneToMany(mappedBy = "enofilo")
-    private SiguiendoEntity siguiendo;
+    @OneToMany(mappedBy = "seguido")
+    private List<SiguiendoEntity>siguiendo;
 }
