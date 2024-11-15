@@ -22,13 +22,12 @@ import java.util.stream.StreamSupport;
 @Service
 public class GestorImportarActualizacionVB implements SujetoNotificador {
     private final EnofiloRepository enofiloRepository;
-    private List<String> bodegasSeleccionadas;
-
     private final TipoUvaRepository tipoUvaRepository;
     private final BodegaRepository bodegaRepository;
     private final VinoRepository vinoRepository;
     private final InterfazImportarActualizacionVB importadorActualizacion;
 
+    private List<String> bodegasSeleccionadas;
     private List<VinoEntity> vinosActualizados = new ArrayList<>();
     private List<ObservadorNotificacionesPush> observadores = new ArrayList<>();
 
@@ -41,12 +40,11 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
         this.enofiloRepository = enofiloRepository;
     }
 
-
     public List<BodegaDto> buscarBodegasConActualizacion() {
         // Convierte el Iterable a un Stream para aplicar filtrado y mapeo
-        return StreamSupport.stream(bodegaRepository.findAll().spliterator(), false)
+        return StreamSupport.stream(this.bodegaRepository.findAll().spliterator(), false)
                 .filter(BodegaEntity::tieneActualizacion)
-                .map(bodega -> new BodegaDto(bodega))
+                .map(BodegaDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -62,7 +60,7 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
     }
 
     private VinoEntity crearVino(BodegaEntity bodega, VinoDto actualizacion) {
-        Optional<TipoUvaEntity> tipoUvaExistente = tipoUvaRepository.findByNombre(actualizacion.getVarietalDto().getTipoUvaDto().getNombre());
+        Optional<TipoUvaEntity> tipoUvaExistente = this.tipoUvaRepository.findByNombre(actualizacion.getVarietalDto().getTipoUvaDto().getNombre());
         TipoUvaEntity tipoUva = tipoUvaExistente.orElseGet(() -> new TipoUvaEntity(actualizacion.getVarietalDto().getTipoUvaDto().getNombre(),
                 actualizacion.getVarietalDto().getTipoUvaDto().getDescripcion()));
 
@@ -75,13 +73,13 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
         nuevoVino.setPrecio(actualizacion.getPrecio());
         nuevoVino.setBodega(bodega);
         nuevoVino.crearVarietal(actualizacion.getVarietalDto(), tipoUva);
-        vinoRepository.save(nuevoVino);
+        this.vinoRepository.save(nuevoVino);
         return nuevoVino;
     }
 
-    private void actualiarVinoExistente(VinoEntity vino, VinoDto actualizacion){
+    private void actualizarVinoExistente(VinoEntity vino, VinoDto actualizacion){
         vino.actualizarDatosVino(actualizacion);
-        vinoRepository.save(vino);
+        this.vinoRepository.save(vino);
     }
 
     private boolean verificarSeleccionUnica(){
@@ -89,26 +87,21 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
     }
 
     private ResumenActualizacionDto actualizarDatosBodega(String nombreBodega){
-        // HAY QUE VER EN QUE MOMENTO DEL PROCESO SE SUSCRIBEN LOS OBSERVADORES.
-        List<ObservadorNotificacionesPush> notificacionesPush = new ArrayList<>();
-        notificacionesPush.add(new InterfazNotificacionesPush());
-        this.suscribir(notificacionesPush);
-
         List<ItemResumenActualizacionBodegaDto> itemsResumenActualizacion = new ArrayList<>();
 
-        BodegaDto actualizaciones = importadorActualizacion.solicitarActualizacionAPI(nombreBodega);
-        BodegaEntity bodegaExistente = bodegaRepository.findByNombre(nombreBodega)
+        BodegaDto actualizaciones = this.importadorActualizacion.solicitarActualizacionAPI(nombreBodega);
+        BodegaEntity bodegaExistente = this.bodegaRepository.findByNombre(nombreBodega)
                 .orElseThrow(() -> new IllegalArgumentException("La bodega con nombre " + nombreBodega + " no existe en la base de datos."));
 
         actualizaciones.getVinos().forEach(actualizacion -> {
             // Busca en la base de datos si existe un vino con el mismo nombre
-            Optional<VinoEntity> vinoExistente = vinoRepository.findByNombre(actualizacion.getNombre());
+            Optional<VinoEntity> vinoExistente = this.vinoRepository.findByNombre(actualizacion.getNombre());
 
             if (vinoExistente.isPresent()) {
                 // Flujo para cuando el vino ya existe en la base de datos
                 // Es una ACTUALIZACION
                 VinoEntity vino = vinoExistente.get();
-                this.actualiarVinoExistente(vino, actualizacion);
+                this.actualizarVinoExistente(vino, actualizacion);
                 itemsResumenActualizacion.add(new ItemResumenActualizacionBodegaDto(vino, "actualizacion"));
                 this.vinosActualizados.add(vino);
             } else {
@@ -121,7 +114,11 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
         });
 
         bodegaExistente.actualizarFechaUltimaActualizacion();
-        bodegaRepository.save(bodegaExistente);
+        this.bodegaRepository.save(bodegaExistente);
+
+        // Notificar a los enófilos después de procesar todas las actualizaciones
+        this.notificarEnofilos();
+
         return new ResumenActualizacionDto(bodegaExistente, itemsResumenActualizacion);
     }
 
@@ -130,7 +127,7 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
         pero se resuevle de esta forma para respetar los diagramas.
      */
     private List<String> buscarSeguidoresDeBodega(BodegaEntity bodega) {
-        Iterable<EnofiloEntity> enofilos = enofiloRepository.findAll();
+        Iterable<EnofiloEntity> enofilos = this.enofiloRepository.findAll();
         List<EnofiloEntity> seguidores = new ArrayList<>();
 
         // Iterar sobre todos los enófilos registrados
@@ -141,7 +138,7 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
             }
         }
 
-        // Iterar sobre los seguidores para obetner el nombre de usuario, de nuevo, altamente inecificente pero esto dice el diagrama.
+        // Iterar sobre los seguidores para obtener el nombre de usuario, de nuevo, altamente ineficicente pero esto dice el diagrama.
         List<String> nombreUsuarioSeguidores = new ArrayList<>();
         for (EnofiloEntity seguidor : seguidores){
             nombreUsuarioSeguidores.add(seguidor.getUsuario().getNombre());
@@ -151,6 +148,14 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
     }
 
     // PATRON OBSERVER
+    public void notificarEnofilos() {
+        List<ObservadorNotificacionesPush> notificacionesPush = new ArrayList<>();
+        notificacionesPush.add(new InterfazNotificacionesPush());
+        this.suscribir(notificacionesPush);
+
+        this.notificar();
+    }
+
     @Override
     public void suscribir(List<ObservadorNotificacionesPush> obs) {
         this.observadores.addAll(obs);
@@ -174,9 +179,13 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
 
         for (ObservadorNotificacionesPush obs : this.observadores) {
             for (VinoEntity vino : this.vinosActualizados) {
-                obs.actualizar(vino.getNombre(), vino.getAniada(), vino.getPrecio(),
-                        vino.getBodega().getNombre(), vino.getVarietal().getTipoUva().getNombre(),
-                        new Date(), this.buscarSeguidoresDeBodega(vino.getBodega()));
+                obs.actualizar( vino.getNombre(),
+                                vino.getAniada(),
+                                vino.getPrecio(),
+                                vino.getBodega().getNombre(),
+                                vino.getVarietal().getTipoUva().getNombre(),
+                                new Date(),
+                                this.buscarSeguidoresDeBodega(vino.getBodega()));
             }
         }
     }
