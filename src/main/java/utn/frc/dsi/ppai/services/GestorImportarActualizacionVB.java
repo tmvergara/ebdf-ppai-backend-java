@@ -51,9 +51,7 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
     public ResumenActualizacionDto tomarBodegasSeleccionadas(List<String> bodegasSeleccionadas){
         this.bodegasSeleccionadas = bodegasSeleccionadas;
         if(this.verificarSeleccionUnica()){
-            ResumenActualizacionDto actualizacion = this.actualizarDatosBodega(this.bodegasSeleccionadas.get(0));
-            this.notificar();
-            return actualizacion;
+            return this.actualizarDatosBodega(this.bodegasSeleccionadas.get(0));
         } else {
             throw new RuntimeException("Se selecciono mas de una bodega.");
         }
@@ -94,8 +92,11 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
                 .orElseThrow(() -> new IllegalArgumentException("La bodega con nombre " + nombreBodega + " no existe en la base de datos."));
 
         actualizaciones.getVinos().forEach(actualizacion -> {
-            // Busca en la base de datos si existe un vino con el mismo nombre
-            Optional<VinoEntity> vinoExistente = this.vinoRepository.findByNombre(actualizacion.getNombre());
+            // Busca en la base de datos si existe un vino con el mismo nombre y bodega
+            Optional<VinoEntity> vinoExistente = this.vinoRepository.findByNombreAndBodega(
+                    actualizacion.getNombre(),
+                    bodegaExistente
+            );
 
             if (vinoExistente.isPresent()) {
                 // Flujo para cuando el vino ya existe en la base de datos
@@ -118,7 +119,6 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
 
         // Notificar a los enófilos después de procesar todas las actualizaciones
         this.notificarEnofilos();
-
         return new ResumenActualizacionDto(bodegaExistente, itemsResumenActualizacion);
     }
 
@@ -152,7 +152,6 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
         List<ObservadorNotificacionesPush> notificacionesPush = new ArrayList<>();
         notificacionesPush.add(new InterfazNotificacionesPush());
         this.suscribir(notificacionesPush);
-
         this.notificar();
     }
 
@@ -178,7 +177,9 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
         // destinatarios
 
         for (ObservadorNotificacionesPush obs : this.observadores) {
+            System.out.println("OBS");
             for (VinoEntity vino : this.vinosActualizados) {
+                System.out.println(vino.getBodega());
                 obs.actualizar( vino.getNombre(),
                                 vino.getAniada(),
                                 vino.getPrecio(),
