@@ -29,4 +29,9 @@ public class SiguiendoEntity {
         this.bodega = bodega;
         this.seguido = seguido;
     }
+
+    public boolean sosDeBodega(BodegaEntity bodega) {
+        return this.bodega.equals(bodega);
+    }
+
 }

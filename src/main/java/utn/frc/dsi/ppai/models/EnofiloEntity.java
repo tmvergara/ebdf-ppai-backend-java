@@ -23,4 +23,14 @@ public class EnofiloEntity {
 
     @OneToMany(mappedBy = "seguido")
     private List<SiguiendoEntity>siguiendo;
+
+    public boolean sigueABodega(BodegaEntity bodega) {
+        for (SiguiendoEntity siguiendoEntity : siguiendo) {
+            if (siguiendoEntity.sosDeBodega(bodega)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

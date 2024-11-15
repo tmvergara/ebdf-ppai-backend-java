@@ -7,6 +7,7 @@ import utn.frc.dsi.ppai.dtos.VinoDto;
 import utn.frc.dsi.ppai.dtos.responses.ItemResumenActualizacionBodegaDto;
 import utn.frc.dsi.ppai.dtos.responses.ResumenActualizacionDto;
 import utn.frc.dsi.ppai.models.BodegaEntity;
+import utn.frc.dsi.ppai.models.EnofiloEntity;
 import utn.frc.dsi.ppai.models.TipoUvaEntity;
 import utn.frc.dsi.ppai.models.VinoEntity;
 import utn.frc.dsi.ppai.repositories.BodegaRepository;
@@ -27,6 +28,8 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
     private final BodegaRepository bodegaRepository;
     private final VinoRepository vinoRepository;
     private final InterfazImportarActualizacionVB importadorActualizacion;
+
+    private List<EnofiloEntity> enofilos = new ArrayList<>();
 
     private List<ObservadorNotificacionesPush> observadores = new ArrayList<>();
 
@@ -112,6 +115,33 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
         bodegaRepository.save(bodegaExistente);
         return new ResumenActualizacionDto(bodegaExistente, itemsResumenActualizacion);
     }
+
+    /*
+    public List<EnofiloEntity> buscarSeguidoresDeBodega(BodegaEntity bodega) {
+        List<EnofiloEntity> seguidores = new ArrayList<>();
+        // Iterar sobre todos los enófilos registrados
+        for (EnofiloEntity enofilo : enofilos) {
+            // Verificar si el enófilo sigue la bodega pasada como parámetro
+            if (enofilo.sigueABodega(bodega)) {
+                seguidores.add(enofilo);
+            }
+        }
+        return seguidores;
+    }
+
+    public List<EnofiloEntity> buscarSeguidoresDeBodega(List<String> bodegasSeleccionadas) {
+        this.bodegasSeleccionadas = bodegasSeleccionadas;
+        if (this.bodegasSeleccionadas.size() != 1) {
+            throw new IllegalArgumentException("Se debe seleccionar exactamente una bodega.");
+        }
+
+        String nombreBodega = this.bodegasSeleccionadas.get(0);
+        BodegaEntity bodega = bodegaRepository.findByNombre(nombreBodega)
+                .orElseThrow(() -> new IllegalArgumentException("Bodega no encontrada: " + nombreBodega));
+
+        return buscarSeguidoresDeBodega(bodega);
+    }
+    */
 
     // PATRON OBSERVER
 
