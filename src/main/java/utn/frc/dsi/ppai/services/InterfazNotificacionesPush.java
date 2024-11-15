@@ -1,4 +1,27 @@
 package utn.frc.dsi.ppai.services;
 
-public class InterfazNotificacionesPush {
+import utn.frc.dsi.ppai.models.EnofiloEntity;
+
+import java.util.Date;
+
+public class InterfazNotificacionesPush implements ObservadorNotificacionesPush {
+
+    @Override
+    public void actualizar(String nombreVino, Integer aniada, Double precio, String nombreBodega, String nombreVarietal, Date fecha, String[] destinatarios) {
+        String mensaje = String.format(
+                "Actualización de vino: %s (Añada %d) de bodega %s\n" +
+                        "Varietal: %s\n" +
+                        "Precio actual: $%.2f\n" +
+                        "Fecha de actualización: %s",
+                nombreVino, aniada, nombreBodega, nombreVarietal, precio, fecha);
+        for (String destinatario : destinatarios) {
+            enviarNotificacionPush(mensaje, destinatario);
+        }
+    }
+
+    public void enviarNotificacionPush(String mensaje, String destinatario) {
+        // Logica Notificacion Push
+        System.out.println("Enviando notificación push a " + destinatario + ":");
+        System.out.println(mensaje);
+    }
 }

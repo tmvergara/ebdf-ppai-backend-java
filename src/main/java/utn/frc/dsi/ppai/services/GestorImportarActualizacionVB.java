@@ -28,6 +28,8 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
     private final VinoRepository vinoRepository;
     private final InterfazImportarActualizacionVB importadorActualizacion;
 
+    private List<ObservadorNotificacionesPush> observadores = new ArrayList<>();
+
     @Autowired
     public GestorImportarActualizacionVB(BodegaRepository bodegaRepository, VinoRepository vinoRepository, InterfazImportarActualizacionVB importadorActualizacion, TipoUvaRepository tipoUvaRepository) {
         this.bodegaRepository = bodegaRepository;
@@ -115,17 +117,30 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
 
     @Override
     public void suscribir(List<ObservadorNotificacionesPush> obs) {
+        observadores.addAll(obs);
 
     }
 
     @Override
     public void quitar(List<ObservadorNotificacionesPush> obs) {
+        observadores.removeAll(obs);
 
     }
 
     @Override
     public void notificar() {
+        // detalles del vino
+        // nombreVino
+        // anada
+        // precio
+        // nombreBodega
+        // nombreVarietal
+        // fecha
+        // destinatarios
 
+        for (ObservadorNotificacionesPush obs : observadores) {
+            // obs.actualizar(nombreVino, anada, precio, nombreBodega, nombreVarietal, fecha, destinatarios);
+        }
     }
 
 
