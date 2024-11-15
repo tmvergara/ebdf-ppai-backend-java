@@ -22,7 +22,7 @@ public class EnofiloEntity {
     private UsuarioEntity usuario;
 
     @OneToMany(mappedBy = "seguido")
-    private List<SiguiendoEntity>siguiendo;
+    private List<SiguiendoEntity> siguiendo;
 
     public boolean sigueABodega(BodegaEntity bodega) {
         for (SiguiendoEntity siguiendoEntity : siguiendo) {

@@ -11,17 +11,17 @@ import utn.frc.dsi.ppai.models.EnofiloEntity;
 import utn.frc.dsi.ppai.models.TipoUvaEntity;
 import utn.frc.dsi.ppai.models.VinoEntity;
 import utn.frc.dsi.ppai.repositories.BodegaRepository;
+import utn.frc.dsi.ppai.repositories.EnofiloRepository;
 import utn.frc.dsi.ppai.repositories.TipoUvaRepository;
 import utn.frc.dsi.ppai.repositories.VinoRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
 public class GestorImportarActualizacionVB implements SujetoNotificador {
+    private final EnofiloRepository enofiloRepository;
     private List<String> bodegasSeleccionadas;
 
     private final TipoUvaRepository tipoUvaRepository;
@@ -29,16 +29,16 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
     private final VinoRepository vinoRepository;
     private final InterfazImportarActualizacionVB importadorActualizacion;
 
-    private List<EnofiloEntity> enofilos = new ArrayList<>();
-
+    private List<VinoEntity> vinosActualizados = new ArrayList<>();
     private List<ObservadorNotificacionesPush> observadores = new ArrayList<>();
 
     @Autowired
-    public GestorImportarActualizacionVB(BodegaRepository bodegaRepository, VinoRepository vinoRepository, InterfazImportarActualizacionVB importadorActualizacion, TipoUvaRepository tipoUvaRepository) {
+    public GestorImportarActualizacionVB(BodegaRepository bodegaRepository, VinoRepository vinoRepository, InterfazImportarActualizacionVB importadorActualizacion, TipoUvaRepository tipoUvaRepository, EnofiloRepository enofiloRepository) {
         this.bodegaRepository = bodegaRepository;
         this.vinoRepository = vinoRepository;
         this.importadorActualizacion = importadorActualizacion;
         this.tipoUvaRepository = tipoUvaRepository;
+        this.enofiloRepository = enofiloRepository;
     }
 
 
@@ -53,7 +53,9 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
     public ResumenActualizacionDto tomarBodegasSeleccionadas(List<String> bodegasSeleccionadas){
         this.bodegasSeleccionadas = bodegasSeleccionadas;
         if(this.verificarSeleccionUnica()){
-            return this.actualizarDatosBodega(this.bodegasSeleccionadas.get(0));
+            ResumenActualizacionDto actualizacion = this.actualizarDatosBodega(this.bodegasSeleccionadas.get(0));
+            this.notificar();
+            return actualizacion;
         } else {
             throw new RuntimeException("Se selecciono mas de una bodega.");
         }
@@ -87,6 +89,11 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
     }
 
     private ResumenActualizacionDto actualizarDatosBodega(String nombreBodega){
+        // HAY QUE VER EN QUE MOMENTO DEL PROCESO SE SUSCRIBEN LOS OBSERVADORES.
+        List<ObservadorNotificacionesPush> notificacionesPush = new ArrayList<>();
+        notificacionesPush.add(new InterfazNotificacionesPush());
+        this.suscribir(notificacionesPush);
+
         List<ItemResumenActualizacionBodegaDto> itemsResumenActualizacion = new ArrayList<>();
 
         BodegaDto actualizaciones = importadorActualizacion.solicitarActualizacionAPI(nombreBodega);
@@ -103,11 +110,13 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
                 VinoEntity vino = vinoExistente.get();
                 this.actualiarVinoExistente(vino, actualizacion);
                 itemsResumenActualizacion.add(new ItemResumenActualizacionBodegaDto(vino, "actualizacion"));
+                this.vinosActualizados.add(vino);
             } else {
                 // Flujo para cuando el vino no existe en la base de datos
                 // Es una CREACION
                 VinoEntity nuevoVino = this.crearVino(bodegaExistente, actualizacion);
                 itemsResumenActualizacion.add(new ItemResumenActualizacionBodegaDto(nuevoVino, "creacion"));
+                this.vinosActualizados.add(nuevoVino);
             }
         });
 
@@ -117,8 +126,13 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
     }
 
     /*
-    public List<EnofiloEntity> buscarSeguidoresDeBodega(BodegaEntity bodega) {
+        Este metodo es ineficiente, se pdoria hacer la consulta directamente a la base de datos
+        pero se resuevle de esta forma para respetar los diagramas.
+     */
+    private List<String> buscarSeguidoresDeBodega(BodegaEntity bodega) {
+        Iterable<EnofiloEntity> enofilos = enofiloRepository.findAll();
         List<EnofiloEntity> seguidores = new ArrayList<>();
+
         // Iterar sobre todos los enófilos registrados
         for (EnofiloEntity enofilo : enofilos) {
             // Verificar si el enófilo sigue la bodega pasada como parámetro
@@ -126,35 +140,25 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
                 seguidores.add(enofilo);
             }
         }
-        return seguidores;
-    }
 
-    public List<EnofiloEntity> buscarSeguidoresDeBodega(List<String> bodegasSeleccionadas) {
-        this.bodegasSeleccionadas = bodegasSeleccionadas;
-        if (this.bodegasSeleccionadas.size() != 1) {
-            throw new IllegalArgumentException("Se debe seleccionar exactamente una bodega.");
+        // Iterar sobre los seguidores para obetner el nombre de usuario, de nuevo, altamente inecificente pero esto dice el diagrama.
+        List<String> nombreUsuarioSeguidores = new ArrayList<>();
+        for (EnofiloEntity seguidor : seguidores){
+            nombreUsuarioSeguidores.add(seguidor.getUsuario().getNombre());
         }
-
-        String nombreBodega = this.bodegasSeleccionadas.get(0);
-        BodegaEntity bodega = bodegaRepository.findByNombre(nombreBodega)
-                .orElseThrow(() -> new IllegalArgumentException("Bodega no encontrada: " + nombreBodega));
-
-        return buscarSeguidoresDeBodega(bodega);
+        System.out.println(nombreUsuarioSeguidores);
+        return nombreUsuarioSeguidores;
     }
-    */
 
     // PATRON OBSERVER
-
     @Override
     public void suscribir(List<ObservadorNotificacionesPush> obs) {
-        observadores.addAll(obs);
-
+        this.observadores.addAll(obs);
     }
 
     @Override
     public void quitar(List<ObservadorNotificacionesPush> obs) {
-        observadores.removeAll(obs);
-
+        this.observadores.removeAll(obs);
     }
 
     @Override
@@ -168,8 +172,12 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
         // fecha
         // destinatarios
 
-        for (ObservadorNotificacionesPush obs : observadores) {
-            // obs.actualizar(nombreVino, anada, precio, nombreBodega, nombreVarietal, fecha, destinatarios);
+        for (ObservadorNotificacionesPush obs : this.observadores) {
+            for (VinoEntity vino : this.vinosActualizados) {
+                obs.actualizar(vino.getNombre(), vino.getAniada(), vino.getPrecio(),
+                        vino.getBodega().getNombre(), vino.getVarietal().getTipoUva().getNombre(),
+                        new Date(), this.buscarSeguidoresDeBodega(vino.getBodega()));
+            }
         }
     }
 

@@ -3,11 +3,12 @@ package utn.frc.dsi.ppai.services;
 import utn.frc.dsi.ppai.models.EnofiloEntity;
 
 import java.util.Date;
+import java.util.List;
 
 public class InterfazNotificacionesPush implements ObservadorNotificacionesPush {
 
     @Override
-    public void actualizar(String nombreVino, Integer aniada, Double precio, String nombreBodega, String nombreVarietal, Date fecha, String[] destinatarios) {
+    public void actualizar(String nombreVino, Integer aniada, Double precio, String nombreBodega, String nombreVarietal, Date fecha, List<String> destinatarios) {
         String mensaje = String.format(
                 "Actualización de vino: %s (Añada %d) de bodega %s\n" +
                         "Varietal: %s\n" +
