@@ -13,7 +13,8 @@ import utn.frc.dsi.ppai.services.GestorImportarActualizacionVB;
 import java.util.List;
 
 @RestController
-@RequestMapping("/actualizar-vinos-bodega")
+@RequestMapping("/bodegas/actualizar-vinos-bodega")
+@CrossOrigin(origins = "http://localhost:5173")
 public class PantallaImportarActualizacionVB {
     private final GestorImportarActualizacionVB gestorImportarActualizacionVB;
 
