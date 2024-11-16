@@ -1,10 +1,12 @@
 package utn.frc.dsi.ppai.services;
 
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import utn.frc.dsi.ppai.dtos.BodegaDto;
 import utn.frc.dsi.ppai.dtos.VinoDto;
-import utn.frc.dsi.ppai.dtos.responses.ItemResumenActualizacionBodegaDto;
+import utn.frc.dsi.ppai.dtos.responses.ItemResumenActualizacionDto;
+import utn.frc.dsi.ppai.dtos.responses.ResumenActualizacionBodegaDto;
 import utn.frc.dsi.ppai.dtos.responses.ResumenActualizacionDto;
 import utn.frc.dsi.ppai.models.BodegaEntity;
 import utn.frc.dsi.ppai.models.EnofiloEntity;
@@ -48,12 +50,15 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
                 .collect(Collectors.toList());
     }
 
-    public ResumenActualizacionDto tomarBodegasSeleccionadas(List<String> bodegasSeleccionadas){
+    public ResumenActualizacionDto tomarBodegasSeleccionadas(List<String> bodegasSeleccionadas) throws ServiceException {
         this.bodegasSeleccionadas = bodegasSeleccionadas;
         if(this.verificarSeleccionUnica()){
-            return this.actualizarDatosBodega(this.bodegasSeleccionadas.get(0));
+            // Curso principal.
+            return new ResumenActualizacionDto(this.actualizarDatosBodega(this.bodegasSeleccionadas.get(0)));
         } else {
-            throw new RuntimeException("Se selecciono mas de una bodega.");
+            // Curso alternativo 1. Se selecciono mas de una bodega.
+            List<ResumenActualizacionBodegaDto> bodegasActualizadas = this.bodegasSeleccionadas.stream().map(this::actualizarDatosBodega).toList();
+            return new ResumenActualizacionDto(bodegasActualizadas);
         }
     }
 
@@ -84,8 +89,8 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
         return this.bodegasSeleccionadas.size() == 1;
     }
 
-    private ResumenActualizacionDto actualizarDatosBodega(String nombreBodega){
-        List<ItemResumenActualizacionBodegaDto> itemsResumenActualizacion = new ArrayList<>();
+    private ResumenActualizacionBodegaDto actualizarDatosBodega(String nombreBodega) throws ServiceException {
+        List<ItemResumenActualizacionDto> itemsResumenActualizacion = new ArrayList<>();
 
         BodegaDto actualizaciones = this.importadorActualizacion.solicitarActualizacionAPI(nombreBodega);
         BodegaEntity bodegaExistente = this.bodegaRepository.findByNombre(nombreBodega)
@@ -103,13 +108,13 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
                 // Es una ACTUALIZACION
                 VinoEntity vino = vinoExistente.get();
                 this.actualizarVinoExistente(vino, actualizacion);
-                itemsResumenActualizacion.add(new ItemResumenActualizacionBodegaDto(vino, "actualizacion"));
+                itemsResumenActualizacion.add(new ItemResumenActualizacionDto(vino, "actualizacion"));
                 this.vinosActualizados.add(vino);
             } else {
                 // Flujo para cuando el vino no existe en la base de datos
                 // Es una CREACION
                 VinoEntity nuevoVino = this.crearVino(bodegaExistente, actualizacion);
-                itemsResumenActualizacion.add(new ItemResumenActualizacionBodegaDto(nuevoVino, "creacion"));
+                itemsResumenActualizacion.add(new ItemResumenActualizacionDto(nuevoVino, "creacion"));
                 this.vinosActualizados.add(nuevoVino);
             }
         });
@@ -119,7 +124,7 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
 
         // Notificar a los enófilos después de procesar todas las actualizaciones
         this.notificarEnofilos();
-        return new ResumenActualizacionDto(bodegaExistente, itemsResumenActualizacion);
+        return new ResumenActualizacionBodegaDto(bodegaExistente, itemsResumenActualizacion);
     }
 
     /*

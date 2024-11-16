@@ -1,6 +1,7 @@
 package utn.frc.dsi.ppai.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import utn.frc.dsi.ppai.dtos.BodegaDto;
@@ -21,7 +22,7 @@ public class InterfazImportarActualizacionVB {
     }
 
     // Esta funcion simula la llamada a la API externa de las bodegas para traer las actualizaciones.
-    public BodegaDto solicitarActualizacionAPI(String nombreBodega) {
+    public BodegaDto solicitarActualizacionAPI(String nombreBodega) throws ServiceException {
         String rutaArchivo = "src/main/resources/actualizacionBodegas.json";
         try {
             // Leer el JSON desde el archivo
@@ -46,7 +47,7 @@ public class InterfazImportarActualizacionVB {
 
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new ServiceException("El servidor de Bodega externo no esta disponible en este momento.");
         }
     }
 

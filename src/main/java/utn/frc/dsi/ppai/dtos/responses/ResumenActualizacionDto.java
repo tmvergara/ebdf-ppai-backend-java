@@ -1,15 +1,23 @@
 package utn.frc.dsi.ppai.dtos.responses;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import utn.frc.dsi.ppai.models.BodegaEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 public class ResumenActualizacionDto {
-    BodegaEntity bodega;
-    List<ItemResumenActualizacionBodegaDto> updates;
+    private Integer cantidadBodegasActualizadas;
+    private List<ResumenActualizacionBodegaDto> actualizaciones;
 
+    public ResumenActualizacionDto(List<ResumenActualizacionBodegaDto> bodegasActualizadas){
+        this.cantidadBodegasActualizadas = bodegasActualizadas.size();
+        this.actualizaciones = bodegasActualizadas;
+    }
+
+    public ResumenActualizacionDto(ResumenActualizacionBodegaDto bodegaActualizada){
+        this.cantidadBodegasActualizadas = 1;
+        this.actualizaciones = new ArrayList<>();
+        this.actualizaciones.add(bodegaActualizada);
+    }
 }

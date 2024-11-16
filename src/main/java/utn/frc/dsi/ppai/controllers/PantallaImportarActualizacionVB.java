@@ -44,11 +44,11 @@ public class PantallaImportarActualizacionVB {
             return ResponseEntity.ok(resumenActualizacion);
         } catch (ServiceException e) {
             ErrorResponse errorResponse = new ErrorResponse(
-                    HttpStatus.NOT_FOUND.value(),
-                    "Not Found",
+                    HttpStatus.BAD_REQUEST.value(),
+                    "Error al procesar la solicitud: ",
                     e.getMessage()
             );
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
 }

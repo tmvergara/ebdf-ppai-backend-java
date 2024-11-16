@@ -5,7 +5,7 @@ import utn.frc.dsi.ppai.models.VarietalEntity;
 import utn.frc.dsi.ppai.models.VinoEntity;
 
 @Data
-public class ItemResumenActualizacionBodegaDto {
+public class ItemResumenActualizacionDto {
     private String nombre;
     private Double precio;
     private Double notaDeCata;
@@ -13,7 +13,7 @@ public class ItemResumenActualizacionBodegaDto {
     private String varietal;
     private String tipoUpdate;
 
-    public ItemResumenActualizacionBodegaDto(String nombre, Double precio, Double notaDeCata, String imgEtiqueta, VarietalEntity varietal, String tipoUpdate) {
+    public ItemResumenActualizacionDto(String nombre, Double precio, Double notaDeCata, String imgEtiqueta, VarietalEntity varietal, String tipoUpdate) {
         this.nombre = nombre;
         this.precio = precio;
         this.notaDeCata = notaDeCata;
@@ -22,7 +22,7 @@ public class ItemResumenActualizacionBodegaDto {
         this.tipoUpdate = tipoUpdate;
     }
 
-    public ItemResumenActualizacionBodegaDto(VinoEntity vinoActualizado, String tipoUpdate){
+    public ItemResumenActualizacionDto(VinoEntity vinoActualizado, String tipoUpdate){
         this.nombre = vinoActualizado.getNombre();
         this.precio = vinoActualizado.getPrecio();
         this.notaDeCata = vinoActualizado.getNotaDeCata();
