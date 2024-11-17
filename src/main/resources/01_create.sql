@@ -1,3 +1,13 @@
+DROP TABLE IF EXISTS vino_maridaje;
+DROP TABLE IF EXISTS vino;
+DROP TABLE IF EXISTS varietal;
+DROP TABLE IF EXISTS tipo_uva;
+DROP TABLE IF EXISTS siguiendo;
+DROP TABLE IF EXISTS maridaje;
+DROP TABLE IF EXISTS enofilo;
+DROP TABLE IF EXISTS bodega;
+DROP TABLE IF EXISTS usuario;
+
 -- Tabla Usuario
 CREATE TABLE usuario (
                          id INTEGER PRIMARY KEY AUTOINCREMENT,

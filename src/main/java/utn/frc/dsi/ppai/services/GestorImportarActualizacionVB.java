@@ -182,9 +182,7 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
         // destinatarios
 
         for (ObservadorNotificacionesPush obs : this.observadores) {
-            System.out.println("OBS");
             for (VinoEntity vino : this.vinosActualizados) {
-                System.out.println(vino.getBodega());
                 obs.actualizar( vino.getNombre(),
                                 vino.getAniada(),
                                 vino.getPrecio(),
