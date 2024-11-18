@@ -92,7 +92,10 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
     private ResumenActualizacionBodegaDto actualizarDatosBodega(String nombreBodega) throws ServiceException {
         List<ItemResumenActualizacionDto> itemsResumenActualizacion = new ArrayList<>();
 
+        // Simula que se obtienen los datos de la API externa de cada bodega.
         BodegaDto actualizaciones = this.importadorActualizacion.solicitarActualizacionAPI(nombreBodega);
+
+        // Busca la bodega seleccionada de la BD.
         BodegaEntity bodegaExistente = this.bodegaRepository.findByNombre(nombreBodega)
                 .orElseThrow(() -> new IllegalArgumentException("La bodega con nombre " + nombreBodega + " no existe en la base de datos."));
 
@@ -128,8 +131,8 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
     }
 
     /*
-        Este metodo es ineficiente, se pdoria hacer la consulta directamente a la base de datos
-        pero se resuevle de esta forma para respetar los diagramas.
+        Este metodo es ineficiente, se podria hacer la consulta directamente a la base de datos,
+        pero se resuelve de esta forma para respetar los diagramas.
      */
     private List<String> buscarSeguidoresDeBodega(BodegaEntity bodega) {
         Iterable<EnofiloEntity> enofilos = this.enofiloRepository.findAll();
@@ -143,12 +146,12 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
             }
         }
 
-        // Iterar sobre los seguidores para obtener el nombre de usuario, de nuevo, altamente ineficicente pero esto dice el diagrama.
+        // Iterar sobre los seguidores para obtener el nombre de usuario, de nuevo, altamente ineficicente, pero esto dice el diagrama.
         List<String> nombreUsuarioSeguidores = new ArrayList<>();
         for (EnofiloEntity seguidor : seguidores){
             nombreUsuarioSeguidores.add(seguidor.getUsuario().getNombre());
         }
-        System.out.println(nombreUsuarioSeguidores);
+        System.out.println("Destinatarios: " + nombreUsuarioSeguidores);
         return nombreUsuarioSeguidores;
     }
 
@@ -172,15 +175,6 @@ public class GestorImportarActualizacionVB implements SujetoNotificador {
 
     @Override
     public void notificar() {
-        // detalles del vino
-        // nombreVino
-        // anada
-        // precio
-        // nombreBodega
-        // nombreVarietal
-        // fecha
-        // destinatarios
-
         for (ObservadorNotificacionesPush obs : this.observadores) {
             for (VinoEntity vino : this.vinosActualizados) {
                 obs.actualizar( vino.getNombre(),
